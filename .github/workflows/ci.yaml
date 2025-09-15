@@ -47,6 +47,17 @@ jobs:
           curl -f http://localhost:8080/metrics
           docker stop test-container
 
+      # For now, save image as artifact instead of using docker registry
+      # This avoids need for registry setup and credentials
+      - name: Save Docker image
+        run: docker save tiny-service:latest -o tiny-service.tar
+
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: tiny-service.tar
+
       - name: Scan with Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -59,8 +70,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build image
-        run: docker build -t tiny-service:latest .
+      # Reuse the same image from build job instead of rebuilding
+      - name: Download Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+
+      - name: Load Docker image
+        run: docker load -i tiny-service.tar
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.8.0
