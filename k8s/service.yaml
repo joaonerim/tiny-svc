@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tiny-service
+  labels:
+    app: tiny-service
+    component: api
+    tier: backend
+  annotations:
+    service.kubernetes.io/topology-aware-hints: auto
+spec:
+  type: ClusterIP
+  selector:
+    app: tiny-service
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+    protocol: TCP
+  sessionAffinity: None
