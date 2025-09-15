@@ -22,7 +22,8 @@ app = FastAPI(
 )
 
 # Welcome prefix from environment variable for demonstrating secrets
-WELCOME_PREFIX = os.getenv("WELCOME_PREFIX", "Hello")
+def get_welcome_prefix():
+    return os.getenv("WELCOME_PREFIX", "Hello")
 
 
 @app.middleware("http")
@@ -50,14 +51,15 @@ async def health_check():
 @app.get("/greet")
 async def greet(name: Optional[str] = Query(None)):
     """Greeting endpoint that returns a JSON response"""
+    welcome_prefix = get_welcome_prefix()
     if not name:
         return {
-            "message": f"{WELCOME_PREFIX}, anonymous user!",
+            "message": f"{welcome_prefix}, anonymous user!",
             "timestamp": time.time(),
         }
 
     return {
-        "message": f"{WELCOME_PREFIX}, {name}!",
+        "message": f"{welcome_prefix}, {name}!",
         "timestamp": time.time()
     }
 

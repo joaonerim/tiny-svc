@@ -38,5 +38,6 @@ def test_metrics():
 def test_welcome_prefix_default():
     """Test that WELCOME_PREFIX has a value (could be default or from env)"""
     import app
-    assert app.WELCOME_PREFIX is not None
-    assert len(app.WELCOME_PREFIX) > 0
+    welcome_prefix = app.get_welcome_prefix()
+    assert welcome_prefix is not None
+    assert len(welcome_prefix) > 0
